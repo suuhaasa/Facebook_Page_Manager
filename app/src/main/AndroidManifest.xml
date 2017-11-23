@@ -41,7 +41,12 @@
         <activity
             android:name=".HomePageActivity"
             android:label="@string/title_activity_home_page"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".PostInsightsActivity"
+                android:label="@string/title_activity_post_insights"
+                android:parentActivityName=".HomePageActivity"
+                android:theme="@style/AppTheme"/>
+
     </application>
 
 </manifest>

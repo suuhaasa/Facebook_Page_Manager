@@ -36,9 +36,12 @@ public class HomePageActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+
+        //set up toolbar for the views.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // set up the floating action button for action.
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,19 +51,23 @@ public class HomePageActivity extends AppCompatActivity
             }
         });
 
+        // set up drawer layout and toggle
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        //set up navigation view
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        ViewPager viewPager= (ViewPager) findViewById(R.id.view_pager_container);
-        PagerAdapter pagerAdapter=new FragmentAdapter(getSupportFragmentManager());
+        // set up view pager for tab layout
+        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager_container);
+        PagerAdapter pagerAdapter = new FragmentAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
 
+        // set up tab layout
         TabLayout tabLayout= (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
 
@@ -79,7 +86,7 @@ public class HomePageActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home_page, menu);
+        getMenuInflater().inflate(R.menu.activity_home_page_drawer, menu);
         return true;
     }
 

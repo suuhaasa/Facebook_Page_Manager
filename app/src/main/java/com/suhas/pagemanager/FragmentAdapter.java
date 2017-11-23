@@ -1,5 +1,7 @@
 package com.suhas.pagemanager;
 
+import android.graphics.pdf.PdfDocument;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -14,11 +16,19 @@ public class FragmentAdapter extends FragmentPagerAdapter {
     }
     @Override
     public Fragment getItem(int position){
+        Bundle arguments = new Bundle();
+        PageFragment pageFragment = new PageFragment();
         switch (position){
             case 0:
-                return new PageFragment();
+                // arguments
+                arguments.putString("type", "false");
+                pageFragment.setArguments(arguments);
+                return pageFragment;
             case 1:
-                return new PageFragment();
+                arguments = new Bundle();
+                arguments.putString("type", "true");
+                pageFragment.setArguments(arguments);
+                return pageFragment;
         }
         return null;
     }
