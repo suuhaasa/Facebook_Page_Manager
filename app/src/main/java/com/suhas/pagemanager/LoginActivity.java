@@ -8,7 +8,6 @@ import android.widget.TextView;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
@@ -16,9 +15,8 @@ import com.facebook.login.widget.LoginButton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     private TextView info;
     private LoginButton loginButton;
@@ -28,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions("email", "public_profile");
@@ -77,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         tv_name.setText(first_name + " " + last_name);
         tv_email.setText("Email: " + email);
         tv_id.setText("ID: " + id);
-        Intent intent = new Intent(this.getApplicationContext(), HomePage.class);
+        Intent intent = new Intent(this.getApplicationContext(), HomePageActivity.class);
         startActivity(intent);
     }
     @Override
