@@ -29,8 +29,11 @@ import com.facebook.HttpMethod;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 public class HomePageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{ //, PageFragment.OnListFragmentInteractionListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,9 +62,22 @@ public class HomePageActivity extends AppCompatActivity
         toggle.syncState();
 
         //set up navigation view
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        Menu menu = navigationView.getMenu();
+        Menu submenu = menu.addSubMenu("New Super SubMenu");
+        GraphAPIHelper.fetchPages(new GraphAPIHelper.OnPagesFetchListener(){
+            public void onSuccess(List<Page> pages){
+                Toast.makeText(HomePageActivity.this, String.valueOf(pages.size()), Toast.LENGTH_SHORT).show();
+                for(Page page: pages) {
+                    addMenuItem(navigationView, page.getName());
+                }
+            }
+            public void onFailure(String message){
+                Toast.makeText(HomePageActivity.this, message, Toast.LENGTH_SHORT).show();
+            }
+        });
         // set up view pager for tab layout
         ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager_container);
         PagerAdapter pagerAdapter = new FragmentAdapter(getSupportFragmentManager());
@@ -72,7 +88,12 @@ public class HomePageActivity extends AppCompatActivity
         tabLayout.setupWithViewPager(viewPager);
 
     }
+    private void addMenuItem(NavigationView navigationView, String pageName) {
 
+        Menu menu = navigationView.getMenu();
+        menu.add(pageName);
+        navigationView.invalidate();
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

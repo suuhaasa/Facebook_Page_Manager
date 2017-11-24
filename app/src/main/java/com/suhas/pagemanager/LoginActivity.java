@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -56,6 +57,10 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+        if(AccessToken.getCurrentAccessToken() != null){
+            Intent intent = new Intent(this.getApplicationContext(), HomePageActivity.class);
+            startActivity(intent);
+        }
     }
     public void displayUserInfo(JSONObject object){
         String first_name = "", last_name = "", email = "", id = "";
