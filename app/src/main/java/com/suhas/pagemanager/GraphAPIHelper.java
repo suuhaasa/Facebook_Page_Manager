@@ -1,6 +1,7 @@
 package com.suhas.pagemanager;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -70,13 +71,20 @@ public class GraphAPIHelper {
     }
 
     /**
-     * @param pageID
+     * @param page
      * @param onPostsFetchListener
      */
-    public static void fetchPublishedPosts(String pageID, final OnPostsFetchListener onPostsFetchListener){
+    public static void fetchPublishedPosts(Page page, final OnPostsFetchListener onPostsFetchListener){
+        String accessToken = page.getAccess_token();
+        AccessToken currentToken = AccessToken.getCurrentAccessToken();
+        AccessToken page_access_token = new AccessToken(accessToken, currentToken.getApplicationId(),
+                currentToken.getUserId(), currentToken.getPermissions(),
+                currentToken.getDeclinedPermissions(), currentToken.getSource(),
+                currentToken.getExpires(), currentToken.getLastRefresh());
+
         GraphRequest graphRequest = new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/" + pageID + "/feed?include_hidden=true&fields=message,created_time,is_hidden,insights.metric(post_impressions)",
+                page_access_token,
+                "/" + page.getId() + "/feed?include_hidden=true&fields=message,created_time,is_hidden,insights.metric(post_impressions)",
                 null,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
@@ -84,25 +92,27 @@ public class GraphAPIHelper {
                      /* handle the result */
                     List<Post> posts = new ArrayList<Post>();
                     JSONObject graphObject = response.getJSONObject();
+                        Log.v("response is", graphObject.toString());
                     if (response.getError() == null) {
                         try {
                             JSONArray dataObject = graphObject.getJSONArray("data");
                             //int summary = graphObject.getInt("summary");
                             for (int i = 0; i < dataObject.length(); i++) {
-                                String message = dataObject.getJSONObject(i).getString("message");
-                                String id = dataObject.getJSONObject(i).getString("id");
-                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault());
-                                String date = dataObject.getJSONObject(i).getString("created_time");
-                                //String about = dataObject.getJSONObject(i).getString("about");
-                                Post currentPost = new Post(message, id, sdf.parse(date));
+                                Post currentPost = new Post();
+
+                                if(dataObject.getJSONObject(i).has("message"))
+                                currentPost.setMessage(dataObject.getJSONObject(i).getString("message"));
+                                if(dataObject.getJSONObject(i).has("id"))
+                                    currentPost.setId(dataObject.getJSONObject(i).getString("id"));
+                                if(dataObject.getJSONObject(i).has("created_time"))
+                                    currentPost.setDate(dataObject.getJSONObject(i).getString("created_time"));
+
                                 posts.add(currentPost);
                             }
                             onPostsFetchListener.onPostsFetchSuccess(posts);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
-                        } catch(ParseException p){
-                            p.printStackTrace();
                         }
                     } else {
                         onPostsFetchListener.onPostsFetchFailure(response.getError().getErrorMessage());
@@ -114,13 +124,20 @@ public class GraphAPIHelper {
     }
 
     /**
-     * @param pageID
+     * @param //pageID
      * @param onPostsFetchListener
      */
-    public static void fetchUnPublishedPosts(String pageID, final OnPostsFetchListener onPostsFetchListener){
+    public static void fetchUnPublishedPosts(Page page, final OnPostsFetchListener onPostsFetchListener){
+        String accessToken = page.getAccess_token();
+        AccessToken currentToken = AccessToken.getCurrentAccessToken();
+        AccessToken page_access_token = new AccessToken(accessToken, currentToken.getApplicationId(),
+                currentToken.getUserId(), currentToken.getPermissions(),
+                currentToken.getDeclinedPermissions(), currentToken.getSource(),
+                currentToken.getExpires(), currentToken.getLastRefresh());
+
         GraphRequest graphRequest = new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/" + pageID + "/feed?include_hidden=true&fields=message,created_time,is_hidden,insights.metric(post_impressions)",
+                page_access_token,
+                "/" + page.getId() + "/feed?include_hidden=true&fields=message,created_time,is_hidden,insights.metric(post_impressions)",
                 null,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {
@@ -128,25 +145,26 @@ public class GraphAPIHelper {
                      /* handle the result */
                         List<Post> posts = new ArrayList<Post>();
                         JSONObject graphObject = response.getJSONObject();
+                        Log.v("response is", graphObject.toString());
                         if (response.getError() == null) {
                             try {
                                 JSONArray dataObject = graphObject.getJSONArray("data");
                                 //int summary = graphObject.getInt("summary");
                                 for (int i = 0; i < dataObject.length(); i++) {
-                                    String message = dataObject.getJSONObject(i).getString("message");
-                                    String id = dataObject.getJSONObject(i).getString("id");
-                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault());
-                                    String date = dataObject.getJSONObject(i).getString("created_time");
-                                    //String about = dataObject.getJSONObject(i).getString("about");
-                                    Post currentPost = new Post(message, id, sdf.parse(date));
+                                    Post currentPost = new Post();
+
+                                    if(dataObject.getJSONObject(i).has("message"))
+                                        currentPost.setMessage(dataObject.getJSONObject(i).getString("message"));
+                                    if(dataObject.getJSONObject(i).has("id"))
+                                        currentPost.setId(dataObject.getJSONObject(i).getString("id"));
+                                    if(dataObject.getJSONObject(i).has("created_time"))
+                                        currentPost.setDate(dataObject.getJSONObject(i).getString("created_time"));
                                     posts.add(currentPost);
                                 }
                                 onPostsFetchListener.onPostsFetchSuccess(posts);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                            } catch(ParseException p){
-                                p.printStackTrace();
                             }
                         } else {
                             onPostsFetchListener.onPostsFetchFailure(response.getError().getErrorMessage());

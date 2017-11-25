@@ -5,11 +5,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,25 +16,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.HttpMethod;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.facebook.login.LoginManager;
 
 import java.util.List;
 
 public class HomePageActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener{ //, PageFragment.OnListFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ActivityCommunicator { //, PageFragment.OnListFragmentInteractionListener {
 
     FragmentAdapter pagerAdapter;
     ViewPager viewPager;
     List<Page> mainPages;
+    public FragmentCommunicator fragmentCommunicator;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,12 +61,10 @@ public class HomePageActivity extends AppCompatActivity
 
         GraphAPIHelper.fetchPages(new GraphAPIHelper.OnPagesFetchListener(){
             public void onPagesFetchSuccess(List<Page> pages){
-                Toast.makeText(HomePageActivity.this, String.valueOf(pages.size()), Toast.LENGTH_SHORT).show();
-                int place = 1000;
+                //Toast.makeText(HomePageActivity.this, String.valueOf(pages.size()), Toast.LENGTH_SHORT).show();
                 mainPages = pages;
-                for(Page page: pages) {
-                    addMenuItem(navigationView, page, place);
-                    place = place - 100 ;
+                for(int i = 0; i < pages.size(); i++) {
+                    navigationView.getMenu().add(R.id.pages_group, i, i , pages.get(i).getName());
                 }
             }
             public void onPagesFetchFailure(String message){
@@ -92,12 +81,7 @@ public class HomePageActivity extends AppCompatActivity
         tabLayout.setupWithViewPager(viewPager);
 
     }
-    private void addMenuItem(NavigationView navigationView, Page page, int place) {
 
-        Menu menu = navigationView.getMenu();
-        menu.add(R.id.pages_group, Menu.NONE, place , page.getName());
-        navigationView.invalidate();
-    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -136,21 +120,36 @@ public class HomePageActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
-
-        } else if (id == R.id.nav_gallery) {
-            Toast.makeText(this, "Gallery", Toast.LENGTH_SHORT).show();
+//        if (id == R.id.nav_camera) {
+//
+//        } else if (id == R.id.nav_gallery) {
+//            Toast.makeText(this, "Gallery", Toast.LENGTH_SHORT).show();
+//
+//        }
+        if(id == R.id.logout_item){
+            LoginManager.getInstance().logOut();
+            Intent intent = new Intent(this.getApplicationContext(), LoginActivity.class);
+            startActivity(intent);
+        }
+        else if(id == R.id.about_item){
+            Toast.makeText(HomePageActivity.this, "Page Manager v0.01", Toast.LENGTH_SHORT).show();
 
         }
+        else if(id == R.id.help_item){
+            Toast.makeText(HomePageActivity.this, "For help visit www.facebook.com", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            fragmentCommunicator.passDataToFragment(mainPages.get(id));
+        }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    public void showPages(String object){
-
-            Toast.makeText(this, object, Toast.LENGTH_LONG).show();
-
+    @Override
+    public void passDataToActivity(String someValue){
+        Toast.makeText(HomePageActivity.this, someValue, Toast.LENGTH_SHORT).show();
     }
 //    @Override
 //    public void onListFragmentInteraction(DummyContent.DummyItem item) {

@@ -4,20 +4,15 @@
     <group android:title="Pages"
         android:checkableBehavior="single"
         android:id="@+id/pages_group">
-        <item
-            android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="Import" />
-        <item
-        android:id="@+id/nav_gallery"
-        android:icon="@drawable/ic_menu_gallery"
-        android:title="Gallery" />
+
 
     </group>
 
-    <group android:title="Settings"
-        android:id="@+id/settings_group"
-        android:checkableBehavior="none">
+    <item android:title="Settings"
+        android:id="@+id/settings_submenu"
+        android:checkableBehavior="none"
+        android:orderInCategory="100">
+        <menu>
             <item
                 android:id="@+id/help_item"
                 android:icon="@drawable/ic_menu_share"
@@ -30,6 +25,8 @@
                 android:id="@+id/logout_item"
                 android:icon="@drawable/ic_menu_send"
                 android:title="Log out" />
-    </group>
+        </menu>
+    </item>
+
 
 </menu>

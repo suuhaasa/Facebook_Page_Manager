@@ -70,11 +70,11 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
 
         //set the page name
         TextView pageName = (TextView) cardView.findViewById(R.id.name_page);
-        pageName.setText(mPostsToDisplay.get(position).getName());
+        pageName.setText(mPostsToDisplay.get(position).getId());
 
         // set the page description
         TextView pageDescription = (TextView) cardView.findViewById(R.id.description_page);
-        pageDescription.setText(mPostsToDisplay.get(position).getDescription());
+        pageDescription.setText(mPostsToDisplay.get(position).getMessage());
 
         //set the listener
         cardView.setOnClickListener(new View.OnClickListener(){

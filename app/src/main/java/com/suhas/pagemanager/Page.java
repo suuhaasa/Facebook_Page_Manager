@@ -25,15 +25,15 @@ public class Page {
     }
 
     public String getAccess_token() {
-        return name;
+        return access_token;
     }
 
     public void setAccess_token(String name) {
-        this.name = name;
+        this.access_token = name;
     }
 
     public String getAbout() {
-        return name;
+        return about;
     }
 
     public void setAbout(String name) {

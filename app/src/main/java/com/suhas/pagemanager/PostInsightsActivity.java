@@ -20,11 +20,11 @@ public class PostInsightsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         int postId = (Integer) getIntent().getExtras().get(EXTRA_POSTID);
-        String postName = Post.posts[postId].getName();
+        String postName = Post.posts[postId].getId();
         TextView nameTextView = (TextView) findViewById(R.id.insight_post_name);
         nameTextView.setText(postName);
 
-        String postDescription = Post.posts[postId].getName();
+        String postDescription = Post.posts[postId].getMessage();
         TextView descriptionTextView = (TextView) findViewById(R.id.insight_post_description);
         nameTextView.setText(postDescription);
     }
