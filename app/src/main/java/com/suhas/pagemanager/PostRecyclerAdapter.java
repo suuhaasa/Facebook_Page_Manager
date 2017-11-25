@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.List;
+
 /**
  * Created by Suhas on 11/23/2017.
  */
@@ -14,9 +16,9 @@ import android.widget.TextView;
 public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapter.ViewHolder> {
 
     // TODO make it a post dataset rather than a string.
-    private String[] names;
-    private String[] descriptions;
-
+    //private String[] names;
+    //private String[] descriptions;
+    private List<Post> mPostsToDisplay;
     //Listner to call when cardView is clicked
     private CardClickListener listener;
     public static interface CardClickListener{
@@ -36,9 +38,9 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
     }
 
     // TODO constructor for the page data set
-    public PostRecyclerAdapter(String[] names, String[] descriptions) {
-        this.names = names;
-        this.descriptions = descriptions;
+    public PostRecyclerAdapter(List<Post> postsToDisplay) {
+        this.mPostsToDisplay = postsToDisplay;
+
     }
 
     public void setListener(CardClickListener listener){
@@ -68,11 +70,11 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
 
         //set the page name
         TextView pageName = (TextView) cardView.findViewById(R.id.name_page);
-        pageName.setText(names[position]);
+        pageName.setText(mPostsToDisplay.get(position).getName());
 
         // set the page description
         TextView pageDescription = (TextView) cardView.findViewById(R.id.description_page);
-        pageDescription.setText(descriptions[position]);
+        pageDescription.setText(mPostsToDisplay.get(position).getDescription());
 
         //set the listener
         cardView.setOnClickListener(new View.OnClickListener(){
@@ -88,7 +90,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return names.length;
+        return mPostsToDisplay.size();
     }
 
 

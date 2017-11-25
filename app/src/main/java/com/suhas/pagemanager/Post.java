@@ -1,31 +1,38 @@
 package com.suhas.pagemanager;
 
+import java.util.Date;
+
 /**
  * Created by Suhas on 11/23/2017.
  */
 
 public class Post {
-    private String name; // name of the post
+    private String id; // id of the post
     //private int imageResourceId; // image of the post
-    private String desciption; // description of the page.
+    private String message; // description of the page.
+    private Date date; // post created date
+    public enum POST_TYPE {PUBLISHED, UNPUBLISHED;}
+
     public static final Post[] posts = {
-            new Post("first post", "first description"),
-            new Post("second post", "second description"),
-            new Post("third post", "third description"),
-            new Post("fourth post", "fourth description"),
-            new Post("fifth post", "fifth description"),
-            new Post("sixth post", "sixth description"),
-            new Post("seventh post", "seventh description"),
-            new Post("eighth post", "eighth description")
+            new Post("first post", "first description", new Date(123124)),
+            new Post("second post", "second description", new Date(123124)),
+            new Post("third post", "third description", new Date(123124)),
+            new Post("fourth post", "fourth description", new Date(123124)),
+            new Post("fifth post", "fifth description", new Date(123124)),
+            new Post("sixth post", "sixth description", new Date(123124)),
+            new Post("seventh post", "seventh description", new Date(123124)),
+            new Post("eighth post", "eighth description", new Date(123124))
     };
-    private Post(String name, String desciption){
-        this.name = name;
-        this.desciption = desciption;
+    public Post(String name, String desciption, Date date){
+        this.id = name;
+        this.message = desciption;
+        this.date = date;
     }
     public String getName(){
-        return name;
+        return id;
     }
     public String getDescription(){
-        return desciption;
+        return message;
     }
+    public Date getDate(){return date;}
 }

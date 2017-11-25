@@ -8,7 +8,7 @@
         android:text="helloworld"
         android:layout_width="wrap_content"
         android:layout_height="92dp"
-        android:id="@+id/fragment_page"
+        android:id="@+id/fragment_page_text"
         android:layout_weight="0.89" />
     <!-- A RecyclerView with some commonly used attributes -->
     <android.support.v7.widget.RecyclerView

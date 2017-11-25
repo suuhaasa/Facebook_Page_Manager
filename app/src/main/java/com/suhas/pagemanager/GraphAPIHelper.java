@@ -12,8 +12,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Suhas on 11/23/2017.
@@ -22,14 +25,13 @@ import java.util.List;
 public class GraphAPIHelper {
 
     public static interface OnPagesFetchListener{
-        void onSuccess(List<Page> pages);
-        void onFailure(String message);
+        void onPagesFetchSuccess(List<Page> pages);
+        void onPagesFetchFailure(String message);
     }
 
-    private OnPagesFetchListener onPagesFetchListener;
-
-    public void attachPagesFetchListener(OnPagesFetchListener onPagesFetchListener){
-        this.onPagesFetchListener = onPagesFetchListener;
+    public static interface OnPostsFetchListener{
+        void onPostsFetchSuccess(List<Post> posts);
+        void onPostsFetchFailure(String message);
     }
 
     public static GraphRequest getFeedGraphRequest(String pageId, GraphRequest.Callback callback) {
@@ -67,46 +69,134 @@ public class GraphAPIHelper {
 
     }
 
-    public static GraphRequest getMeAccoountsGraphRequest(GraphRequest.Callback callback) {
-        return new GraphRequest(
+    /**
+     * @param pageID
+     * @param onPostsFetchListener
+     */
+    public static void fetchPublishedPosts(String pageID, final OnPostsFetchListener onPostsFetchListener){
+        GraphRequest graphRequest = new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/" + pageID + "/feed?include_hidden=true&fields=message,created_time,is_hidden,insights.metric(post_impressions)",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                     /* handle the result */
+                    List<Post> posts = new ArrayList<Post>();
+                    JSONObject graphObject = response.getJSONObject();
+                    if (response.getError() == null) {
+                        try {
+                            JSONArray dataObject = graphObject.getJSONArray("data");
+                            //int summary = graphObject.getInt("summary");
+                            for (int i = 0; i < dataObject.length(); i++) {
+                                String message = dataObject.getJSONObject(i).getString("message");
+                                String id = dataObject.getJSONObject(i).getString("id");
+                                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault());
+                                String date = dataObject.getJSONObject(i).getString("created_time");
+                                //String about = dataObject.getJSONObject(i).getString("about");
+                                Post currentPost = new Post(message, id, sdf.parse(date));
+                                posts.add(currentPost);
+                            }
+                            onPostsFetchListener.onPostsFetchSuccess(posts);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch(ParseException p){
+                            p.printStackTrace();
+                        }
+                    } else {
+                        onPostsFetchListener.onPostsFetchFailure(response.getError().getErrorMessage());
+                    }
+                    }
+                });
+
+        graphRequest.executeAsync();
+    }
+
+    /**
+     * @param pageID
+     * @param onPostsFetchListener
+     */
+    public static void fetchUnPublishedPosts(String pageID, final OnPostsFetchListener onPostsFetchListener){
+        GraphRequest graphRequest = new GraphRequest(
+                AccessToken.getCurrentAccessToken(),
+                "/" + pageID + "/feed?include_hidden=true&fields=message,created_time,is_hidden,insights.metric(post_impressions)",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                     /* handle the result */
+                        List<Post> posts = new ArrayList<Post>();
+                        JSONObject graphObject = response.getJSONObject();
+                        if (response.getError() == null) {
+                            try {
+                                JSONArray dataObject = graphObject.getJSONArray("data");
+                                //int summary = graphObject.getInt("summary");
+                                for (int i = 0; i < dataObject.length(); i++) {
+                                    String message = dataObject.getJSONObject(i).getString("message");
+                                    String id = dataObject.getJSONObject(i).getString("id");
+                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.getDefault());
+                                    String date = dataObject.getJSONObject(i).getString("created_time");
+                                    //String about = dataObject.getJSONObject(i).getString("about");
+                                    Post currentPost = new Post(message, id, sdf.parse(date));
+                                    posts.add(currentPost);
+                                }
+                                onPostsFetchListener.onPostsFetchSuccess(posts);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } catch(ParseException p){
+                                p.printStackTrace();
+                            }
+                        } else {
+                            onPostsFetchListener.onPostsFetchFailure(response.getError().getErrorMessage());
+                        }
+                    }
+                });
+
+        graphRequest.executeAsync();
+    }
+    /**
+     * Retrieves list of pages from the graph api endpoint,
+     * parses the result and callsback the parameter callback with list of pages,
+     * @param onPagesFetchListener Callback called after parsing
+     */
+    public static void fetchPages(final OnPagesFetchListener onPagesFetchListener) {
+        GraphRequest graphRequest = new GraphRequest(
                 AccessToken.getCurrentAccessToken(),
                 "/me/accounts",
                 null,
                 HttpMethod.GET,
-                callback
-        );
-    }
-    public static void fetchPages(final OnPagesFetchListener e) {
-        GraphRequest graphRequest = GraphAPIHelper.getMeAccoountsGraphRequest(new GraphRequest.Callback() {
-            public void onCompleted(GraphResponse response) {
-            /* handle the result */
-                //parsePageFetchResponse(response);
-                List<Page> pages = new ArrayList<Page>();
-                JSONObject graphObject = response.getJSONObject();
-                if (response.getError() == null) {
-                    try {
-                        JSONArray dataObject = graphObject.getJSONArray("data");
-                        //int summary = graphObject.getInt("summary");
-                        for (int i = 0; i < dataObject.length(); i++) {
-                            String name = dataObject.getJSONObject(i).getString("name");
-                            String id = dataObject.getJSONObject(i).getString("id");
-                            String access_token = dataObject.getJSONObject(i).getString("access_token");
-                            //String about = dataObject.getJSONObject(i).getString("about");
-                            Page currentPage = new Page(name, id, access_token, "");
-                            pages.add(currentPage);
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                     /* handle the result */
+                        //parsePageFetchResponse(response);
+                    List<Page> pages = new ArrayList<Page>();
+                    JSONObject graphObject = response.getJSONObject();
+                    if (response.getError() == null) {
+                        try {
+                            JSONArray dataObject = graphObject.getJSONArray("data");
+                            //int summary = graphObject.getInt("summary");
+                            for (int i = 0; i < dataObject.length(); i++) {
+                                String name = dataObject.getJSONObject(i).getString("name");
+                                String id = dataObject.getJSONObject(i).getString("id");
+                                String access_token = dataObject.getJSONObject(i).getString("access_token");
+                                //String about = dataObject.getJSONObject(i).getString("about");
+                                Page currentPage = new Page(name, id, access_token, "");
+                                pages.add(currentPage);
+                            }
+                            onPagesFetchListener.onPagesFetchSuccess(pages);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                        e.onSuccess(pages);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    } else {
+                        onPagesFetchListener.onPagesFetchFailure(response.getError().getErrorMessage());
                     }
-                } else {
-                    e.onFailure(response.getError().getErrorMessage());
                 }
-            }
-        });
+            });
 
-        graphRequest.executeAsync();
+            graphRequest.executeAsync();
     }
 }
 

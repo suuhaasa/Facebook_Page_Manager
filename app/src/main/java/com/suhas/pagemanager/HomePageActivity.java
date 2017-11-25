@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
@@ -34,7 +35,9 @@ import java.util.List;
 public class HomePageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener{ //, PageFragment.OnListFragmentInteractionListener {
 
-
+    FragmentAdapter pagerAdapter;
+    ViewPager viewPager;
+    List<Page> mainPages;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,22 +68,23 @@ public class HomePageActivity extends AppCompatActivity
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Menu menu = navigationView.getMenu();
-        Menu submenu = menu.addSubMenu("New Super SubMenu");
         GraphAPIHelper.fetchPages(new GraphAPIHelper.OnPagesFetchListener(){
-            public void onSuccess(List<Page> pages){
+            public void onPagesFetchSuccess(List<Page> pages){
                 Toast.makeText(HomePageActivity.this, String.valueOf(pages.size()), Toast.LENGTH_SHORT).show();
+                int place = 1000;
+                mainPages = pages;
                 for(Page page: pages) {
-                    addMenuItem(navigationView, page.getName());
+                    addMenuItem(navigationView, page, place);
+                    place = place - 100 ;
                 }
             }
-            public void onFailure(String message){
+            public void onPagesFetchFailure(String message){
                 Toast.makeText(HomePageActivity.this, message, Toast.LENGTH_SHORT).show();
             }
         });
         // set up view pager for tab layout
-        ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager_container);
-        PagerAdapter pagerAdapter = new FragmentAdapter(getSupportFragmentManager());
+        viewPager = (ViewPager) findViewById(R.id.view_pager_container);
+        pagerAdapter = new FragmentAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
 
         // set up tab layout
@@ -88,10 +92,10 @@ public class HomePageActivity extends AppCompatActivity
         tabLayout.setupWithViewPager(viewPager);
 
     }
-    private void addMenuItem(NavigationView navigationView, String pageName) {
+    private void addMenuItem(NavigationView navigationView, Page page, int place) {
 
         Menu menu = navigationView.getMenu();
-        menu.add(pageName);
+        menu.add(R.id.pages_group, Menu.NONE, place , page.getName());
         navigationView.invalidate();
     }
     @Override
@@ -133,20 +137,9 @@ public class HomePageActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-//            PageFragment publishedPages = new PageFragment();
-//            FragmentManager manager = getSupportFragmentManager();
-//            manager.beginTransaction().replace(R.id.content_home_page, publishedPages, publishedPages.getTag()).commit();
+
         } else if (id == R.id.nav_gallery) {
             Toast.makeText(this, "Gallery", Toast.LENGTH_SHORT).show();
-
-        } else if (id == R.id.nav_slideshow) {
-            /* make the API call */
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
 
         }
 
