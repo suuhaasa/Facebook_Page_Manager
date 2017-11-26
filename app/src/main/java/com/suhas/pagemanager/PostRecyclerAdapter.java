@@ -24,7 +24,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
     //Listner to call when cardView is clicked
     private CardClickListener listener;
     public static interface CardClickListener{
-        public void onClick(int position);
+        public void onClick(String postId);
     }
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -84,7 +84,7 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
             @Override
             public void onClick(View v){
                 if(listener != null){
-                    listener.onClick(position);
+                    listener.onClick(mPostsToDisplay.get(position).getId());
                 }
             }
         });

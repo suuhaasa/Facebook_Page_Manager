@@ -35,26 +35,9 @@ public class GraphAPIHelper {
         void onPostsFetchFailure(String message);
     }
 
-    public static GraphRequest getFeedGraphRequest(String pageId, GraphRequest.Callback callback) {
-
-        return new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/" + pageId + "/feed?include_hidden=true&fields=message,created_time,is_hidden,insights.metric(post_impressions)",
-                null,
-                HttpMethod.GET,
-                callback
-        );
-    }
-
-    public static GraphRequest getPromotablePostsGraphRequest(String pageId, GraphRequest.Callback callback) {
-
-        return new GraphRequest(
-                AccessToken.getCurrentAccessToken(),
-                "/" + pageId + "/promotable_posts?is_published=false&include_hidden=true&fields=message,created_time,is_hidden,insights.metric(post_impressions)",
-                null,
-                HttpMethod.GET,
-                callback
-        );
+    public interface OnPostInsightsFetchListener {
+        void onPostInsightsFetchSuccess(Insight insight);
+        void onPostInsightsFetchFailure(String message);
     }
 
     public static GraphRequest getNewPostGraphRequest(AccessToken accessToken, Bundle params, String pageId, GraphRequest.Callback callback) {
@@ -70,6 +53,56 @@ public class GraphAPIHelper {
 
     }
 
+    public static void fetchPostInsights(String postID, String access_token, final OnPostInsightsFetchListener onPostInsightsFetchListener){
+        String accessToken = access_token;
+        AccessToken currentToken = AccessToken.getCurrentAccessToken();
+        AccessToken page_access_token = new AccessToken(accessToken, currentToken.getApplicationId(),
+                currentToken.getUserId(), currentToken.getPermissions(),
+                currentToken.getDeclinedPermissions(), currentToken.getSource(),
+                currentToken.getExpires(), currentToken.getLastRefresh());
+        GraphRequest graphRequest = new GraphRequest(
+                page_access_token,
+                "/" + postID + "/insights/post_reactions_like_total",
+                null,
+                HttpMethod.GET,
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                     /* handle the result */
+                        Log.v("response is", response.toString());
+
+                        List<Post> posts = new ArrayList<Post>();
+                        JSONObject graphObject = response.getJSONObject();
+                        if (response.getError() == null) {
+                            try {
+                                JSONArray dataObject = graphObject.getJSONArray("data");
+                                Log.v("hello", dataObject.toString());
+                                //int summary = graphObject.getInt("summary");
+                                Insight currentInsight = new Insight();
+                                for (int i = 0; i < dataObject.length(); i++) {
+                                    JSONObject dayViews = dataObject.getJSONObject(i);
+                                    JSONArray jsonArrayValues = dayViews.getJSONArray("values");
+
+                                    if(dataObject.getJSONObject(i).getString("name") == "post_impressions")
+                                        currentInsight.setPost_impressions(dataObject.getJSONObject(i).getJSONArray("values").getJSONObject(0).getString("value"));
+                                    if(dataObject.getJSONObject(i).getString("name") == "post_consumptions")
+                                        currentInsight.setPost_consumptions(dataObject.getJSONObject(i).getJSONArray("values").getJSONObject(0).getString("value"));
+                                    if(dataObject.getJSONObject(i).getString("name") == "post_reactions_like_total")
+                                        currentInsight.setPost_reactions_like_total(dataObject.getJSONObject(i).getJSONArray("values").getJSONObject(0).getString("value"));
+
+                                }
+                                onPostInsightsFetchListener.onPostInsightsFetchSuccess(currentInsight);
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            onPostInsightsFetchListener.onPostInsightsFetchFailure(response.getError().getErrorMessage());
+                        }
+                    }
+                });
+
+        graphRequest.executeAsync();
+    }
     /**
      * @param page
      * @param onPostsFetchListener
@@ -90,9 +123,10 @@ public class GraphAPIHelper {
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
                      /* handle the result */
-                    List<Post> posts = new ArrayList<Post>();
+                        Log.v("response is", response.toString());
+
+                        List<Post> posts = new ArrayList<Post>();
                     JSONObject graphObject = response.getJSONObject();
-                        Log.v("response is", graphObject.toString());
                     if (response.getError() == null) {
                         try {
                             JSONArray dataObject = graphObject.getJSONArray("data");
@@ -137,7 +171,7 @@ public class GraphAPIHelper {
 
         GraphRequest graphRequest = new GraphRequest(
                 page_access_token,
-                "/" + page.getId() + "/feed?include_hidden=true&fields=message,created_time,is_hidden,insights.metric(post_impressions)",
+                "/" + page.getId() + "/promotable_posts?is_published=false&include_hidden=true&fields=message,created_time,is_hidden,insights.metric(post_impressions)",
                 null,
                 HttpMethod.GET,
                 new GraphRequest.Callback() {

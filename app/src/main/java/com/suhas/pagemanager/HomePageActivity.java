@@ -59,7 +59,6 @@ public class HomePageActivity extends AppCompatActivity
         //set up navigation view
         final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         GraphAPIHelper.fetchPages(new GraphAPIHelper.OnPagesFetchListener(){
             public void onPagesFetchSuccess(List<Page> pages){
                 //Toast.makeText(HomePageActivity.this, String.valueOf(pages.size()), Toast.LENGTH_SHORT).show();
@@ -67,6 +66,8 @@ public class HomePageActivity extends AppCompatActivity
                 for(int i = 0; i < pages.size(); i++) {
                     navigationView.getMenu().add(R.id.pages_group, i, i , pages.get(i).getName());
                 }
+                onNavigationItemSelected(navigationView.getMenu().getItem(0));
+
             }
             public void onPagesFetchFailure(String message){
                 Toast.makeText(HomePageActivity.this, message, Toast.LENGTH_SHORT).show();
@@ -153,8 +154,5 @@ public class HomePageActivity extends AppCompatActivity
     public void passDataToActivity(String someValue){
         Toast.makeText(HomePageActivity.this, someValue, Toast.LENGTH_SHORT).show();
     }
-//    @Override
-//    public void onListFragmentInteraction(DummyContent.DummyItem item) {
-//        Toast.makeText(this, item.content, Toast.LENGTH_LONG);
-//    }
+
 }

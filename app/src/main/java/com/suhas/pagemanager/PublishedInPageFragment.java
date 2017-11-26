@@ -31,14 +31,17 @@ public class PublishedInPageFragment extends PageFragment{
     }
 
     public void refreshFeed(){
+        if(activityAssignedPage != null)
         GraphAPIHelper.fetchPublishedPosts(activityAssignedPage, new GraphAPIHelper.OnPostsFetchListener(){
             @Override
             public void onPostsFetchSuccess(List<Post> posts) {
                 mAdapter = new PostRecyclerAdapter(posts);
                 mAdapter.setListener(new PostRecyclerAdapter.CardClickListener(){
-                    public void onClick(int position){
+                    public void onClick(String postId){
+
                         Intent intent = new Intent(getActivity(), PostInsightsActivity.class);
-                        intent.putExtra(PostInsightsActivity.EXTRA_POSTID, position);
+                        intent.putExtra(PostInsightsActivity.EXTRA_POSTID, postId);
+                        intent.putExtra(PostInsightsActivity.EXTRA_ACCESSTOKEN, activityAssignedPage.getAccess_token());
                         getActivity().startActivity(intent);
                     }
                 });

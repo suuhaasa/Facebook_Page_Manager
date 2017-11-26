@@ -27,6 +27,7 @@ public abstract class PageFragment extends Fragment implements FragmentCommunica
     protected RecyclerView.LayoutManager mLayoutManager;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
 
+    public static List<Post> mainPosts;
     protected ActivityCommunicator activityCommunicator;
     protected Page activityAssignedPage;
     private static final String STRING_VALUE ="stringValue";
@@ -85,7 +86,7 @@ public abstract class PageFragment extends Fragment implements FragmentCommunica
         mAdapter = new PostRecyclerAdapter(post);
         mRecyclerView.setAdapter(mAdapter);
 
-        Log.v("sdf", "inside inflatefragment");
+        refreshFeed();
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -97,5 +98,5 @@ public abstract class PageFragment extends Fragment implements FragmentCommunica
     }
 
 
-        public abstract void refreshFeed();
+    public abstract void refreshFeed();
 }
