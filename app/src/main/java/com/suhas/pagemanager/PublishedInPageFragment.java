@@ -23,21 +23,18 @@ public class PublishedInPageFragment extends PageFragment{
     public PageFragment newInstance(){
         return new PublishedInPageFragment();
     };
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflateFragment(R.layout.fragment_page, inflater, container, savedInstanceState);
 
-        return view;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState){
+        return super.onCreateView(inflater, container,
+                savedInstanceState);
     }
+
     public void refreshFeed(){
         GraphAPIHelper.fetchPublishedPosts(activityAssignedPage, new GraphAPIHelper.OnPostsFetchListener(){
             @Override
             public void onPostsFetchSuccess(List<Post> posts) {
-                List<Post> p  = new ArrayList<Post>();
-                p.add(new Post("hello1", "world1", "yes1"));
-                p.add(new Post("hello2", "world2", "yes2"));
-                p.add(new Post("hello3", "world3", "yes3"));
-                mAdapter = new PostRecyclerAdapter(p);
+                mAdapter = new PostRecyclerAdapter(posts);
                 mAdapter.setListener(new PostRecyclerAdapter.CardClickListener(){
                     public void onClick(int position){
                         Intent intent = new Intent(getActivity(), PostInsightsActivity.class);
@@ -46,9 +43,9 @@ public class PublishedInPageFragment extends PageFragment{
                     }
                 });
                 mRecyclerView.setAdapter(mAdapter);
-                mRecyclerView.invalidate();
-
                 Log.v("hello", "num ber of published posts are" + posts.size());
+                mSwipeRefreshLayout.setRefreshing(false);
+
             }
 
             @Override

@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomePageActivity extends AppCompatActivity
@@ -28,7 +29,7 @@ public class HomePageActivity extends AppCompatActivity
     FragmentAdapter pagerAdapter;
     ViewPager viewPager;
     List<Page> mainPages;
-    public FragmentCommunicator fragmentCommunicator;
+    public List<FragmentCommunicator> fragmentCommunicators;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,7 +76,7 @@ public class HomePageActivity extends AppCompatActivity
         viewPager = (ViewPager) findViewById(R.id.view_pager_container);
         pagerAdapter = new FragmentAdapter(getSupportFragmentManager());
         viewPager.setAdapter(pagerAdapter);
-
+        fragmentCommunicators = new ArrayList<FragmentCommunicator>();
         // set up tab layout
         TabLayout tabLayout= (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
@@ -139,6 +140,7 @@ public class HomePageActivity extends AppCompatActivity
             Toast.makeText(HomePageActivity.this, "For help visit www.facebook.com", Toast.LENGTH_SHORT).show();
         }
         else{
+            for(FragmentCommunicator fragmentCommunicator : fragmentCommunicators)
             fragmentCommunicator.passDataToFragment(mainPages.get(id));
         }
 

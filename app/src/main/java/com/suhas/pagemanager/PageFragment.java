@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,18 +22,17 @@ import java.util.List;
 
 public abstract class PageFragment extends Fragment implements FragmentCommunicator{
 
-    PostRecyclerAdapter mAdapter;
-    public Context context;
+    protected PostRecyclerAdapter mAdapter;
     protected RecyclerView mRecyclerView;
     protected RecyclerView.LayoutManager mLayoutManager;
     protected SwipeRefreshLayout mSwipeRefreshLayout;
-    protected Page mPage;
+
     protected ActivityCommunicator activityCommunicator;
     protected Page activityAssignedPage;
     private static final String STRING_VALUE ="stringValue";
 
     public void setPage(Page page) {
-        this.mPage = page;
+        this.activityAssignedPage = page;
     }
 
     public PageFragment(){
@@ -44,7 +44,7 @@ public abstract class PageFragment extends Fragment implements FragmentCommunica
         super.onAttach(context);
 
         activityCommunicator =(ActivityCommunicator)context;
-        ((HomePageActivity) context).fragmentCommunicator = this;
+        ((HomePageActivity) context).fragmentCommunicators.add(this);
     }
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -60,7 +60,9 @@ public abstract class PageFragment extends Fragment implements FragmentCommunica
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        //refreshFeed();
+        if(savedInstanceState != null)
+            activityAssignedPage.setId(savedInstanceState.getString(STRING_VALUE));
+
     }
     @Override
     public void onResume() {
@@ -72,27 +74,28 @@ public abstract class PageFragment extends Fragment implements FragmentCommunica
         activityAssignedPage = page;
         refreshFeed();
     }
-    protected View inflateFragment(int resId, LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_page, container, false);
 
-        View view=inflater.inflate(resId, null);
-        //set up recycle view and layout manager.
         mRecyclerView=(RecyclerView) view.findViewById(R.id.post_recycler_view);
-        mLayoutManager=new LinearLayoutManager(this.getActivity());
-
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        List<Post> post = new ArrayList<Post>();
+        mAdapter = new PostRecyclerAdapter(post);
+        mRecyclerView.setAdapter(mAdapter);
 
         Log.v("sdf", "inside inflatefragment");
-        mRecyclerView.setLayoutManager(mLayoutManager);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh);
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                                                     @Override
-                                                     public void onRefresh() {
-                                                         refreshFeed();
-                                                     }
+            @Override
+            public void onRefresh() {
+                refreshFeed();
+            }
         });
-
         return view;
-        }
+    }
+
 
         public abstract void refreshFeed();
 }
