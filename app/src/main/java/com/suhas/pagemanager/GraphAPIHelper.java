@@ -40,16 +40,42 @@ public class GraphAPIHelper {
         void onPostInsightsFetchFailure(String message);
     }
 
-    public static GraphRequest getNewPostGraphRequest(AccessToken accessToken, Bundle params, String pageId, GraphRequest.Callback callback) {
+    public interface OnCreatePostListener{
+        void onCreatePostSuccess();
+        void onCreatePostFailure();
+    }
 
-        return new GraphRequest(
+    /**
+     * @param access_token access token of the page to be loaded
+     * @param pageId pageid of the page to be loaded
+     * @param params content of the message and 
+     * @param onCreatePostListener
+     */
+    public static void postMessage(String access_token, String pageId, Bundle params, final OnCreatePostListener onCreatePostListener) {
 
-                accessToken,
+        String accessToken = access_token;
+        AccessToken currentToken = AccessToken.getCurrentAccessToken();
+        AccessToken page_access_token = new AccessToken(accessToken, currentToken.getApplicationId(),
+                currentToken.getUserId(), currentToken.getPermissions(),
+                currentToken.getDeclinedPermissions(), currentToken.getSource(),
+                currentToken.getExpires(), currentToken.getLastRefresh());
+
+        GraphRequest graphRequest =  new GraphRequest(
+                page_access_token,
                 "/" + pageId + "/feed",
                 params,
                 HttpMethod.POST,
-                callback
-        );
+                new GraphRequest.Callback() {
+                    public void onCompleted(GraphResponse response) {
+                        Log.v("response is", response.toString());
+                        if (response.getError() == null)
+                        onCreatePostListener.onCreatePostSuccess();
+                        else
+                            onCreatePostListener.onCreatePostFailure();
+
+                    }
+                    });
+        graphRequest.executeAsync();
 
     }
 

@@ -1,10 +1,12 @@
 package com.suhas.pagemanager;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
@@ -24,12 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomePageActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, ActivityCommunicator { //, PageFragment.OnListFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, ActivityCommunicator, CreatePostFragment.OnFragmentInteractionListener { //, PageFragment.OnListFragmentInteractionListener {
 
     FragmentAdapter pagerAdapter;
     ViewPager viewPager;
     List<Page> mainPages;
     public List<FragmentCommunicator> fragmentCommunicators;
+    private Page currentPage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,8 +48,7 @@ public class HomePageActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                showCreatePost();
             }
         });
 
@@ -81,6 +84,19 @@ public class HomePageActivity extends AppCompatActivity
         // set up tab layout
         TabLayout tabLayout= (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
+
+    }
+
+    private void showCreatePost() {
+            FragmentManager fm = getSupportFragmentManager();
+            if(currentPage != null) {
+                CreatePostFragment createPostFragment = CreatePostFragment.newInstance(currentPage.getId(), currentPage.getAccess_token());
+                createPostFragment.show(fm, "fragment_create_post");
+            }
+            else {
+                Toast.makeText(this, "Page not selected", Toast.LENGTH_SHORT).show();
+            }
+
 
     }
 
@@ -140,9 +156,10 @@ public class HomePageActivity extends AppCompatActivity
         else if(id == R.id.help_item){
             Toast.makeText(HomePageActivity.this, "For help visit www.facebook.com", Toast.LENGTH_SHORT).show();
         }
-        else{
+        else {
+            currentPage = mainPages.get(id);
             for(FragmentCommunicator fragmentCommunicator : fragmentCommunicators)
-            fragmentCommunicator.passDataToFragment(mainPages.get(id));
+            fragmentCommunicator.passDataToFragment(currentPage);
         }
 
 
@@ -155,4 +172,8 @@ public class HomePageActivity extends AppCompatActivity
         Toast.makeText(HomePageActivity.this, someValue, Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
 }

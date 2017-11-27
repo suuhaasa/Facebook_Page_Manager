@@ -32,10 +32,6 @@ public abstract class PageFragment extends Fragment implements FragmentCommunica
     protected Page activityAssignedPage;
     private static final String STRING_VALUE ="stringValue";
 
-    public void setPage(Page page) {
-        this.activityAssignedPage = page;
-    }
-
     public PageFragment(){
 
     }
@@ -56,6 +52,7 @@ public abstract class PageFragment extends Fragment implements FragmentCommunica
     @Override
     public void onSaveInstanceState(Bundle outState){
         super.onSaveInstanceState(outState);
+        if(activityAssignedPage != null)
         outState.putString(STRING_VALUE, activityAssignedPage.getId());
     }
     @Override
