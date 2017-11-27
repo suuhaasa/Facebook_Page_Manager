@@ -20,32 +20,11 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:text="TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/login_button"
-        android:layout_alignStart="@+id/login_button"
-        android:layout_marginTop="33dp"
-        android:id="@+id/TV_name" />
-
-    <TextView
-        android:text="TextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/TV_name"
-        android:layout_alignLeft="@+id/TV_name"
-        android:layout_alignStart="@+id/TV_name"
-        android:layout_marginTop="53dp"
-        android:id="@+id/TV_id" />
-
-    <TextView
-        android:text="TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/login_button"
-        android:layout_alignRight="@+id/TV_id"
-        android:layout_alignEnd="@+id/TV_id"
         android:layout_marginBottom="43dp"
+        android:layout_alignLeft="@+id/login_button"
+        android:text="Welcome to Page Manager"
         android:id="@+id/TV_email" />
 </RelativeLayout>

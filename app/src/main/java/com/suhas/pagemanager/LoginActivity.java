@@ -39,7 +39,9 @@ public class LoginActivity extends AppCompatActivity {
                 GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject object, GraphResponse response) {
-                        displayUserInfo(object);
+                        //displayUserInfo(object);
+                        Intent intent = new Intent(getApplicationContext(), HomePageActivity.class);
+                        startActivity(intent);
                     }
                 });
                 Bundle parameters = new Bundle();
@@ -63,27 +65,27 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
-    public void displayUserInfo(JSONObject object){
-        String first_name = "", last_name = "", email = "", id = "";
-        try {
-            first_name = object.getString("first_name");
-            last_name = object.getString("last_name");
-            email = object.getString("email");
-            id = object.getString("id");
-        }
-        catch(JSONException e){
-            e.printStackTrace();
-        }
-        TextView tv_name, tv_id, tv_email;
-        tv_name = (TextView) findViewById(R.id.TV_name);
-        tv_id = (TextView) findViewById(R.id.TV_id);
-        tv_email = (TextView) findViewById(R.id.TV_email);
-        tv_name.setText(first_name + " " + last_name);
-        tv_email.setText("Email: " + email);
-        tv_id.setText("ID: " + id);
-        Intent intent = new Intent(this.getApplicationContext(), HomePageActivity.class);
-        startActivity(intent);
-    }
+//    public void displayUserInfo(JSONObject object){
+//        String first_name = "", last_name = "", email = "", id = "";
+//        try {
+//            first_name = object.getString("first_name");
+//            last_name = object.getString("last_name");
+//            email = object.getString("email");
+//            id = object.getString("id");
+//        }
+//        catch(JSONException e){
+//            e.printStackTrace();
+//        }
+//        TextView tv_name, tv_id, tv_email;
+//        tv_name = (TextView) findViewById(R.id.TV_name);
+//        tv_id = (TextView) findViewById(R.id.TV_id);
+//        tv_email = (TextView) findViewById(R.id.TV_email);
+//        tv_name.setText(first_name + " " + last_name);
+//        tv_email.setText("Email: " + email);
+//        tv_id.setText("ID: " + id);
+//        Intent intent = new Intent(this.getApplicationContext(), HomePageActivity.class);
+//        startActivity(intent);
+//    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

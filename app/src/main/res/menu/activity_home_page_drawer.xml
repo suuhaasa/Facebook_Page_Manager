@@ -15,15 +15,15 @@
         <menu>
             <item
                 android:id="@+id/help_item"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/ic_help_black_24dp"
                 android:title="Help" />
             <item
                 android:id="@+id/about_item"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/ic_info_black_24dp"
                 android:title="About" />
             <item
                 android:id="@+id/logout_item"
-                android:icon="@drawable/ic_menu_send"
+                android:icon="@drawable/ic_power_settings_new_black_24dp"
                 android:title="Log out" />
         </menu>
     </item>
