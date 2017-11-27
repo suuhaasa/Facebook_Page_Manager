@@ -13,11 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by Suhas on 11/23/2017.
@@ -25,22 +22,34 @@ import java.util.Locale;
 
 public class GraphAPIHelper {
 
-    public static interface OnPagesFetchListener{
+    /**
+     * listener called when pages are fetched.
+     */
+    interface OnPagesFetchListener{
         void onPagesFetchSuccess(List<Page> pages);
         void onPagesFetchFailure(String message);
     }
 
-    public static interface OnPostsFetchListener{
+    /**
+     * listener called when post is fetched.
+     */
+    interface OnPostsFetchListener{
         void onPostsFetchSuccess(List<Post> posts);
         void onPostsFetchFailure(String message);
     }
 
-    public interface OnPostInsightsFetchListener {
+    /**
+     * listener called when post insights are called.
+     */
+    interface OnPostInsightsFetchListener {
         void onPostInsightsFetchSuccess(Insight insight);
         void onPostInsightsFetchFailure(String message);
     }
 
-    public interface OnCreatePostListener{
+    /**
+     * listener called when post is created.
+     */
+    interface OnCreatePostListener{
         void onCreatePostSuccess();
         void onCreatePostFailure();
     }
@@ -48,14 +57,13 @@ public class GraphAPIHelper {
     /**
      * @param access_token access token of the page to be loaded
      * @param pageId pageid of the page to be loaded
-     * @param params content of the message and 
-     * @param onCreatePostListener
+     * @param params content of the message and
+     * @param onCreatePostListener listener to be called if success or failure.
      */
-    public static void postMessage(String access_token, String pageId, Bundle params, final OnCreatePostListener onCreatePostListener) {
+     static void postMessage(String access_token, String pageId, Bundle params, final OnCreatePostListener onCreatePostListener) {
 
-        String accessToken = access_token;
         AccessToken currentToken = AccessToken.getCurrentAccessToken();
-        AccessToken page_access_token = new AccessToken(accessToken, currentToken.getApplicationId(),
+        AccessToken page_access_token = new AccessToken(access_token, currentToken.getApplicationId(),
                 currentToken.getUserId(), currentToken.getPermissions(),
                 currentToken.getDeclinedPermissions(), currentToken.getSource(),
                 currentToken.getExpires(), currentToken.getLastRefresh());
@@ -67,7 +75,6 @@ public class GraphAPIHelper {
                 HttpMethod.POST,
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
-                        Log.v("response is", response.toString());
                         if (response.getError() == null)
                         onCreatePostListener.onCreatePostSuccess();
                         else
@@ -79,6 +86,11 @@ public class GraphAPIHelper {
 
     }
 
+    /**
+     * @param postID post id of the post to be fetched
+     * @param access_token access token of the page to be fetched
+     * @param onPostInsightsFetchListener listener called when post insights are fetched
+     */
     public static void fetchPostInsights(String postID, String access_token, final OnPostInsightsFetchListener onPostInsightsFetchListener){
         String accessToken = access_token;
         AccessToken currentToken = AccessToken.getCurrentAccessToken();
@@ -94,25 +106,23 @@ public class GraphAPIHelper {
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
                      /* handle the result */
-                        Log.v("response is", response.toString());
 
                         List<Post> posts = new ArrayList<Post>();
                         JSONObject graphObject = response.getJSONObject();
+                        Log.v("graph helper", graphObject.toString());
                         if (response.getError() == null) {
                             try {
                                 JSONArray dataObject = graphObject.getJSONArray("data");
-                                Log.v("hello", dataObject.toString());
-                                //int summary = graphObject.getInt("summary");
                                 Insight currentInsight = new Insight();
                                 for (int i = 0; i < dataObject.length(); i++) {
                                     JSONObject dayViews = dataObject.getJSONObject(i);
                                     JSONArray jsonArrayValues = dayViews.getJSONArray("values");
 
-                                    if(dataObject.getJSONObject(i).getString("name") == "post_impressions")
+                                    if(dataObject.getJSONObject(i).getString("name").equals("post_impressions"))
                                         currentInsight.setPost_impressions(dataObject.getJSONObject(i).getJSONArray("values").getJSONObject(0).getString("value"));
-                                    if(dataObject.getJSONObject(i).getString("name") == "post_consumptions")
+                                    if(dataObject.getJSONObject(i).getString("name").equals("post_consumptions"))
                                         currentInsight.setPost_consumptions(dataObject.getJSONObject(i).getJSONArray("values").getJSONObject(0).getString("value"));
-                                    if(dataObject.getJSONObject(i).getString("name") == "post_reactions_like_total")
+                                    if(dataObject.getJSONObject(i).getString("name").equals("post_reactions_like_total"))
                                         currentInsight.setPost_reactions_like_total(dataObject.getJSONObject(i).getJSONArray("values").getJSONObject(0).getString("value"));
 
                                 }
@@ -130,8 +140,8 @@ public class GraphAPIHelper {
         graphRequest.executeAsync();
     }
     /**
-     * @param page
-     * @param onPostsFetchListener
+     * @param page page of which published posts are fetched
+     * @param onPostsFetchListener listener called when fetch graph api is called
      */
     public static void fetchPublishedPosts(Page page, final OnPostsFetchListener onPostsFetchListener){
         String accessToken = page.getAccess_token();
@@ -149,7 +159,6 @@ public class GraphAPIHelper {
                 new GraphRequest.Callback() {
                     public void onCompleted(GraphResponse response) {
                      /* handle the result */
-                        Log.v("response is", response.toString());
 
                         List<Post> posts = new ArrayList<Post>();
                     JSONObject graphObject = response.getJSONObject();
@@ -184,7 +193,7 @@ public class GraphAPIHelper {
     }
 
     /**
-     * @param //pageID
+     * @param page
      * @param onPostsFetchListener
      */
     public static void fetchUnPublishedPosts(Page page, final OnPostsFetchListener onPostsFetchListener){
@@ -205,7 +214,6 @@ public class GraphAPIHelper {
                      /* handle the result */
                         List<Post> posts = new ArrayList<Post>();
                         JSONObject graphObject = response.getJSONObject();
-                        Log.v("response is", graphObject.toString());
                         if (response.getError() == null) {
                             try {
                                 JSONArray dataObject = graphObject.getJSONArray("data");
@@ -249,7 +257,7 @@ public class GraphAPIHelper {
                     public void onCompleted(GraphResponse response) {
                      /* handle the result */
                         //parsePageFetchResponse(response);
-                    List<Page> pages = new ArrayList<Page>();
+                    List<Page> pages = new ArrayList<>();
                     JSONObject graphObject = response.getJSONObject();
                     if (response.getError() == null) {
                         try {

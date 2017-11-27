@@ -1,6 +1,8 @@
 package com.suhas.pagemanager;
 
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -18,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.login.LoginManager;
@@ -67,7 +70,9 @@ public class HomePageActivity extends AppCompatActivity
                 //Toast.makeText(HomePageActivity.this, String.valueOf(pages.size()), Toast.LENGTH_SHORT).show();
                 mainPages = pages;
                 for(int i = 0; i < pages.size(); i++) {
-                    navigationView.getMenu().add(R.id.pages_group, i, i , pages.get(i).getName());
+                    Drawable d = getResources().getDrawable(R.drawable.ic_pages_black_24dp);
+                    navigationView.getMenu().add(R.id.pages_group, i, i , pages.get(i).getName()).setIcon(d);
+
                 }
                 onNavigationItemSelected(navigationView.getMenu().getItem(0));
 
@@ -76,6 +81,11 @@ public class HomePageActivity extends AppCompatActivity
                 Toast.makeText(HomePageActivity.this, message, Toast.LENGTH_SHORT).show();
             }
         });
+        View headerLayout = navigationView.getHeaderView(0);
+        TextView mUserName = (TextView) headerLayout.findViewById(R.id.user_name);
+        mUserName.setText(getIntent().getStringExtra("Name"));
+        TextView mEmail = (TextView) headerLayout.findViewById(R.id.user_email);
+        mEmail.setText(getIntent().getStringExtra("Email"));
         // set up view pager for tab layout
         viewPager = (ViewPager) findViewById(R.id.view_pager_container);
         pagerAdapter = new FragmentAdapter(getSupportFragmentManager());

@@ -42,7 +42,6 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
     // TODO constructor for the page data set
     public PostRecyclerAdapter(List<Post> postsToDisplay) {
         this.mPostsToDisplay = postsToDisplay;
-        Log.v("post recycler", "created a adapter of size" + mPostsToDisplay.size());
     }
 
     public void setListener(CardClickListener listener){
@@ -58,7 +57,6 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
         CardView v = (CardView) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.card_view_layout, parent, false);
         // set the view's size, margins, paddings and layout parameters
-        Log.v("post recycler", "created a car");
 
         ViewHolder viewHolder = new ViewHolder(v);
         return viewHolder;

@@ -30,16 +30,15 @@ public class PostInsightsActivity extends AppCompatActivity implements GraphAPIH
         String postId =  getIntent().getExtras().getString(EXTRA_POSTID);
         String access_token = getIntent().getExtras().getString(EXTRA_ACCESSTOKEN);
         /* make the API call */
-        Toast.makeText(this, postId, Toast.LENGTH_LONG).show();
 
+        if(access_token!=null)
         GraphAPIHelper.fetchPostInsights(postId, access_token, this);
 
-        post_impressions = (TextView) findViewById(R.id.insight_post_name);
+        post_impressions = (TextView) findViewById(R.id.post_impressions);
 
+        post_consumptions = (TextView) findViewById(R.id.post_consumptions);
 
-        post_consumptions = (TextView) findViewById(R.id.insight_post_description);
-
-        post_reactions_like_total = (TextView) findViewById(R.id.insight_post_insight3);
+        post_reactions_like_total = (TextView) findViewById(R.id.post_reactions_like_total);
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -57,6 +56,9 @@ public class PostInsightsActivity extends AppCompatActivity implements GraphAPIH
         post_impressions.setText(insight.getPost_impressions());
         post_consumptions.setText(insight.getPost_consumptions());
         post_reactions_like_total.setText(insight.getPost_reactions_like_total());
+        post_impressions.setText("0");
+        post_consumptions.setText("0");
+        post_reactions_like_total.setText("0");
     }
 
     @Override
