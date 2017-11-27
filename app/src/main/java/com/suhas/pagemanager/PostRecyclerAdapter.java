@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -71,11 +72,11 @@ public class PostRecyclerAdapter extends RecyclerView.Adapter<PostRecyclerAdapte
 
         //set the page name
         TextView pageName = (TextView) cardView.findViewById(R.id.name_page);
-        pageName.setText(mPostsToDisplay.get(position).getId());
+        pageName.setText(mPostsToDisplay.get(position).getMessage());
 
         // set the page description
-        TextView pageDescription = (TextView) cardView.findViewById(R.id.description_page);
-        pageDescription.setText(mPostsToDisplay.get(position).getMessage());
+        TextView pageDescription = (TextView) cardView.findViewById(R.id.date_created);
+        pageDescription.setText("Date Created: " + mPostsToDisplay.get(position).getDate());
 
         //set the listener
         cardView.setOnClickListener(new View.OnClickListener(){

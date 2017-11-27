@@ -184,6 +184,7 @@ public class HomePageActivity extends AppCompatActivity
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-
+        for(FragmentCommunicator fragmentCommunicator : fragmentCommunicators)
+            fragmentCommunicator.passDataToFragment(currentPage);
     }
 }

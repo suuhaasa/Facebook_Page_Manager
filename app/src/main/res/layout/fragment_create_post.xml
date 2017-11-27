@@ -1,7 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context="com.suhas.pagemanager.CreatePostFragment">
 
     <android.support.v7.widget.CardView
@@ -9,7 +9,7 @@
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/page_card_view"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="match_parent"
         android:layout_margin="5dp"
         card_view:cardCornerRadius="4dp">
 
@@ -22,20 +22,17 @@
                 android:id="@+id/post_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="4"
                 android:layout_alignParentTop="true"
-                android:ems="10"
                 android:gravity="top"
                 android:hint="What's happening?"
-                android:inputType="textMultiLine"
-                android:lines="4" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Publish?"/>
+                />
+
             <Switch
-                android:text="Switch"
+                android:text="Publish?"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:id="@+id/switch1"
                 android:layout_gravity="left"/>
 
@@ -43,6 +40,7 @@
                 android:id="@+id/post_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:layout_gravity="right"
                 android:text="Post"
                 />

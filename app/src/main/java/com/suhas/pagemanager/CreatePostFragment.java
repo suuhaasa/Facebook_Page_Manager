@@ -136,7 +136,8 @@ public class CreatePostFragment extends DialogFragment implements GraphAPIHelper
 
     @Override
     public void onCreatePostSuccess() {
-        Toast.makeText(getContext(), "create post success", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "Posted to page", Toast.LENGTH_SHORT).show();
+        mListener.onFragmentInteraction(null);
         this.dismiss();
 
 
@@ -144,7 +145,7 @@ public class CreatePostFragment extends DialogFragment implements GraphAPIHelper
 
     @Override
     public void onCreatePostFailure() {
-        Toast.makeText(getContext(), "create post failure", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), "post failure", Toast.LENGTH_SHORT).show();
 
     }
 
